@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --foreground-rgb: 0, 0, 0;
+    --background-start-rgb: 214, 219, 220;
+    --background-end-rgb: 255, 255, 255;
+    --primary: 258 30% 63%;
+    --secondary: 262 6% 64%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+* {
+  list-style: none;
+}
+
+.card-wrap {
+  padding: 20px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.card-wrap::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 20px;
+  width: 4px;
+  height: 30px;
+  background-color: rgba(148, 131, 188);
+  border-radius: 0 2px 2px 0;
+}
+
+.text-style1 {
+  background: radial-gradient(100% 980% at 100% 100%, #a2790d 0%, #ebd197 100%)
+    /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 5px;
+}
+
+.text2 {
+  background: radial-gradient(100% 980% at 100% 100%, #868686 0%, #c0c0c0 100%)
+    /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-clip: text;
+  margin-top: 5px;
+}
+
+.text3 {
+  background: radial-gradient(100% 980% at 100% 100%, #804a00 0%, #b08d57 100%)
+    /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  margin-top: 5px;
+}
+
+.text4 {
+  color: rgba(31, 28, 35, 0.35);
+  margin-top: 5px;
+}
+
+.head-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 17.5px 20px;
+  position: relative;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.head-wrap::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 4px;
+  height: 45px;
+  background: rgba(148, 131, 188);
+  transform: translateY(-50%);
+}
