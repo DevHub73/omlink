@@ -17,7 +17,7 @@ import { useState, useTransition } from 'react'
 import { FormError } from './form-error'
 import { FormSuccess } from './form-success'
 import { Eye, EyeOff } from 'lucide-react'
-import { register } from '@/actions/register'
+import { register } from '@/actions/auth'
 import { useRouter } from 'next/navigation'
 
 export const RegisterForm = () => {

@@ -15,15 +15,39 @@ datasource db {
 
 
 model User {
-  id String @id @default(cuid())
-  email String @unique
-  name String?
-  password String?
-  image String?
-  emailVerified DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                      String             @id @default(cuid())
+  email                   String             @unique
+  name                    String
+  password                String
+  emailVerified           DateTime?
+  createdAt               DateTime           @default(now())
+  updatedAt               DateTime           @updatedAt
+  profile                 UserProfile?
+  followRequestsSent      FollowRequest[]    @relation("FollowRequestsSent")
+  followRequestsReceived  FollowRequest[]    @relation("FollowRequestsReceived")
 }
+
+model UserProfile {
+  id                String          @id @default(cuid())
+  userId            String          @unique
+  user              User            @relation(fields: [userId], references: [id])
+  image             String?
+  interests         String[]
+  price             Int?
+  // comments          Comment[]       @relation("UserComments")
+  events            EventCorrelationUser[]
+  eventAttendees    EventAttendee[] @relation("UserEventAttendees")
+  followers         Follower[]      @relation("UserFollowers")
+  followings        Follower[]      @relation("UserFollowings")
+  mode              UserMode        @default(INDIVIDUAL)
+  projects          ProjectMember[]
+}
+
+enum UserMode {
+  INDIVIDUAL
+  LEVERAGE
+}
+
 
 model VerificationToken {
   id         String @id @default(cuid())
@@ -32,4 +56,96 @@ model VerificationToken {
   expires    DateTime
  
   @@unique([email, token])
+}
+
+// model Comment {
+//   id Int @id @default(autoincrement())
+//   content String
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+//   user UserProfile @relation("UserComments",fields: [userId], references: [userId], onDelete: Cascade)
+//   userId String
+// }
+
+
+model Follower {
+  id Int @id @default(autoincrement())
+  follower UserProfile @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
+  followerId String
+  following UserProfile @relation("UserFollowings", fields: [followingId], references: [id], onDelete: Cascade)
+  followingId String
+}
+
+model FollowRequest {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  sender User @relation("FollowRequestsSent", fields: [senderId], references: [id], onDelete: Cascade)
+  senderId String
+  receiver User @relation("FollowRequestsReceived", fields: [receiverId], references: [id], onDelete: Cascade)
+  receiverId String
+  @@unique([senderId, receiverId])
+}
+
+
+model Event{
+  id String @id @default(cuid())
+  title String
+  description String?
+  time DateTime
+  correlationUser EventCorrelationUser[] @relation("EventCorrelationUsers")
+  attendees EventAttendee[]  @relation("EventAttendees")
+}
+model EventCorrelationUser {
+  id        String      @id @default(cuid())
+  eventId   String
+  userId    String
+  event     Event       @relation(fields: [eventId], references: [id], name: "EventCorrelationUsers")
+  user      UserProfile @relation(fields: [userId], references: [id])
+  @@unique([eventId, userId])
+}
+
+model EventAttendee {
+  id String @id @default(cuid())
+  user UserProfile @relation(fields: [userId], references: [id], name: "UserEventAttendees")
+  userId String
+  event Event @relation(fields: [eventId], references: [id], name: "EventAttendees")
+  eventId String
+}
+
+
+model Product{
+  id String @id @default(cuid())
+  title String
+  description String?
+  price Int
+  Stock Int 
+  SoldQty Int 
+  category String?
+  image String?
+  createdAt DateTime @default(now())
+}
+
+model Project{
+  id String @id @default(cuid())
+  title String
+  description String?
+  price Int
+  image String?
+  status ProjectStatus  @default(OPEN) 
+  members ProjectMember[]
+}
+
+model ProjectMember {
+  id        String          @id @default(cuid())
+  userId    String
+  projectId String
+  user      UserProfile     @relation(fields: [userId], references: [id])
+  project   Project         @relation(fields: [projectId], references: [id])
+  @@unique([userId, projectId])
+}
+
+enum ProjectStatus {
+  OPEN
+  ONGOING
+  CLOSED
 }

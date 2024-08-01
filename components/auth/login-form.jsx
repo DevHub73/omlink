@@ -9,14 +9,13 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { CardWrapper } from './card-wrapper'
-import { z } from 'zod'
 import { LoginSchema } from '@/schemas'
 import { Input } from '@/components/ui/input'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import { FormError } from './form-error'
-import { login } from '@/actions/login'
+import { login } from '@/actions/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FormSuccess } from './form-success'
 

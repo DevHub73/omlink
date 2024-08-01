@@ -1,14 +1,15 @@
 'use server'
 import { signIn } from '@/lib/auth'
 import { getUserByEmail } from './fetchUser'
-// import { db } from '@/db'
-// import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
 import { LoginSchema } from '@/schemas'
 import { AuthError } from 'next-auth'
 import { generateVerificationToken } from '@/lib/tokens'
 import { sendVerificationEmail } from '@/lib/mail'
 import { DEFAULT_LOGIN_REDIRECT } from '@/lib/routes'
-
+import { signOut } from '@/lib/auth'
+import { db } from '@/lib/db'
+import { RegisterSchema } from '@/schemas'
+import bcrypt from 'bcryptjs'
 
 export const login = async (values) => {
   const validatedFields = LoginSchema.safeParse(values)
@@ -39,6 +40,7 @@ export const login = async (values) => {
       password,
       redirectTo: DEFAULT_LOGIN_REDIRECT,
     })
+    return { success: 'Login successful!' }
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
@@ -50,4 +52,35 @@ export const login = async (values) => {
     }
     throw error
   }
+}
+
+export const logout = async () => {
+  await signOut()
+}
+
+export const register = async (values) => {
+  const validatedFileds = RegisterSchema.safeParse(values)
+  if (!validatedFileds.success) {
+    return { error: 'Invalid form data' }
+  }
+
+  const { username, email, password } = validatedFileds.data
+  const hashedPassword = await bcrypt.hash(password, 10)
+  const exsitingUset = await getUserByEmail(email)
+  if (exsitingUset) {
+    return { error: 'User already exists' }
+  }
+  await db.user.create({
+    data: {
+      name: username,
+      email,
+      password: hashedPassword,
+    },
+  })
+  const verficationToken = await generateVerificationToken(email)
+  console.log('verficationToken', verficationToken)
+  //send verification email
+  await sendVerificationEmail(verficationToken.email, verficationToken.token)
+
+  return { success: 'Confirmation Email sent!' }
 }
